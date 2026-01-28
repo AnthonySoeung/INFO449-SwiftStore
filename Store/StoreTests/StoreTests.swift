@@ -66,4 +66,48 @@ TOTAL: $7.97
 """
         XCTAssertEqual(expectedReceipt, receipt.output())
     }
+    func testEmptyRegister() {
+        XCTAssertEqual(0, register.subtotal());
+    }
+    
+    func testEmptyRegisterTotal() {
+        let receipt = register.total();
+
+        XCTAssertEqual(0, receipt.total());
+
+        let expectedReceipt = """
+    Receipt:
+    ------------------
+    TOTAL: $0.00
+    """;
+        XCTAssertEqual(expectedReceipt, receipt.output());
+    }
+    func testTwoItems() {
+        register.scan(Item(name: "Apple", priceEach: 150));
+        register.scan(Item(name: "Banana", priceEach: 50));
+
+        XCTAssertEqual(200, register.subtotal());
+
+        let receipt = register.total();
+        XCTAssertEqual(200, receipt.total());
+    }
+    func testRegisterResetsAfterTotal() {
+        register.scan(Item(name: "Notebook", priceEach: 299))
+        _ = register.total();
+
+        XCTAssertEqual(0, register.subtotal());
+    }
+    func testMultipleTransactions() {
+        register.scan(Item(name: "Pen", priceEach: 99));
+        let receipt1 = register.total();
+        XCTAssertEqual(99, receipt1.total());
+
+        register.scan(Item(name: "Eraser", priceEach: 49));
+        let receipt2 = register.total();
+        XCTAssertEqual(49, receipt2.total());
+    }
+
+
+
+
 }
